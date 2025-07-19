@@ -1,0 +1,16 @@
+name = "Extempore"
+grammar = "extempore"
+path_suffixes = ["xtm"]
+line_comment_prefix = ";;"
+block_comment = ["#|", "|#"]
+autoclose_brackets = true
+language_servers = ["extempore-lsp"]
+
+[brackets]
+"(" = ")"
+"[" = "]"
+"{" = "}"
+"\"" = "\""
+
+[auto_indent]
+scopes = ["source.extempore"]
