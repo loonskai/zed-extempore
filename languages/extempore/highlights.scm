@@ -1,76 +1,38 @@
+; Use Scheme highlighting as a base for now
+; This will work with the tree-sitter-scheme grammar
+
 ; Keywords
-[
-  "define"
-  "lambda"
-  "let"
-  "let*"
-  "letrec"
-  "cond"
-  "if"
-  "else"
-  "and"
-  "or"
-  "not"
-  "begin"
-  "quote"
-  "quasiquote"
-  "unquote"
-  "unquote-splicing"
-] @keyword
-
-; XTLang specific keywords
-[
-  "bind-func"
-  "bind-val"
-  "bind-type"
-  "bind-alias"
-  "bind-poly"
-  "closure"
-] @keyword.function
-
-; Type annotations (XTLang)
-(type_annotation) @type
+(symbol) @keyword
+ (#match? @keyword "^(define|lambda|let|let\\*|letrec|cond|if|else|and|or|not|begin|quote|quasiquote|unquote|unquote-splicing|bind-func|bind-val|bind-type|bind-alias|bind-poly|closure)$")
 
 ; Function definitions
-(define_function
-  name: (identifier) @function)
+(list . (symbol) @keyword (#eq? @keyword "define")
+      . (symbol) @function)
 
-(bind_func
-  name: (identifier) @function)
+(list . (symbol) @keyword (#eq? @keyword "bind-func")
+      . (symbol) @function)
 
-; Function calls
-(call_expression
-  function: (identifier) @function.call)
-
-; Variables and identifiers
-(identifier) @variable
-
-; Literals
+; Numbers
 (number) @number
+
+; Strings
 (string) @string
-(boolean) @constant.builtin
-(character) @character
 
 ; Comments
 (comment) @comment
 
-; Operators
-[
-  "+"
-  "-"
-  "*"
-  "/"
-  "="
-  "<"
-  ">"
-  "<="
-  ">="
-  "eq?"
-] @operator
+; Booleans
+(boolean) @constant.builtin
 
-; Delimiters
+; Characters
+(character) @character
+
+; Brackets
 ["(" ")" "[" "]" "{" "}"] @punctuation.bracket
 
-; Special forms
-(quote) @string.symbol
-(quasiquote) @string.symbol
+; Operators (common Lisp/Scheme operators)
+(symbol) @operator
+ (#match? @operator "^(\\+|\\-|\\*|/|=|<|>|<=|>=|eq\\?|equal\\?|null\\?|pair\\?|list\\?|number\\?|string\\?|symbol\\?|procedure\\?)$")
+
+; Everything else as identifier
+(symbol) @variable
