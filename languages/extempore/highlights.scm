@@ -1,38 +1,80 @@
-; Use Scheme highlighting as a base for now
-; This will work with the tree-sitter-scheme grammar
+(keyword) @keyword
 
-; Keywords
-(symbol) @keyword
- (#match? @keyword "^(define|lambda|let|let\\*|letrec|cond|if|else|and|or|not|begin|quote|quasiquote|unquote|unquote-splicing|bind-func|bind-val|bind-type|bind-alias|bind-poly|closure)$")
+(type) @type
 
-; Function definitions
-(list . (symbol) @keyword (#eq? @keyword "define")
-      . (symbol) @function)
-
-(list . (symbol) @keyword (#eq? @keyword "bind-func")
-      . (symbol) @function)
-
-; Numbers
 (number) @number
 
-; Strings
 (string) @string
 
-; Comments
 (comment) @comment
 
-; Booleans
-(boolean) @constant.builtin
+(list
+  (atom (keyword) @keyword (#eq? @keyword "define"))
+  (atom (identifier) @function))
 
-; Characters
-(character) @character
+(list
+  (atom (keyword) @keyword (#eq? @keyword "bind-func"))
+  (atom (identifier) @function))
 
-; Brackets
-["(" ")" "[" "]" "{" "}"] @punctuation.bracket
+(list
+  (atom (keyword) @keyword.function (#eq? @keyword "lambda")))
 
-; Operators (common Lisp/Scheme operators)
-(symbol) @operator
- (#match? @operator "^(\\+|\\-|\\*|/|=|<|>|<=|>=|eq\\?|equal\\?|null\\?|pair\\?|list\\?|number\\?|string\\?|symbol\\?|procedure\\?)$")
+(list
+  (atom (keyword) @keyword.control (#eq? @keyword "let")))
 
-; Everything else as identifier
-(symbol) @variable
+(list
+  (atom (keyword) @keyword.control (#any-of? @keyword "if" "cond" "else")))
+
+(list
+  (atom (keyword) @operator (#any-of? @keyword "and" "or")))
+
+(list
+  (atom (keyword) @operator (#any-of? @keyword "*" "+" "-" "/" "=" "<" ">" "<=" ">=")))
+
+(list
+  (atom (keyword) @keyword.storage (#any-of? @keyword "alloc" "zalloc" "halloc" "salloc")))
+
+(list
+  (atom (keyword) @constructor (#any-of? @keyword "vector" "tuple" "array")))
+
+(list
+  (atom (keyword) @function.builtin (#any-of? @keyword "vector_ref" "tuple_ref" "array_ref" "aref" "tref" "pref")))
+
+(list
+  (atom (keyword) @function.builtin (#any-of? @keyword "aset" "tset" "pset" "set")))
+
+(list
+  (atom (keyword) @function.builtin (#any-of? @keyword "pref-ptr" "aref-ptr" "tref-ptr")))
+
+(list
+  (atom (keyword) @function.builtin (#any-of? @keyword "pfill" "tfill")))
+
+(list
+  (atom (keyword) @keyword.control (#any-of? @keyword "while" "dotimes" "begin" "beginz")))
+
+(list
+  (atom (keyword) @keyword.directive (#any-of? @keyword "bind-lib" "bind-val" "bind-type")))
+
+(list
+  (atom (keyword) @function.builtin (#any-of? @keyword "print" "printf")))
+
+(list
+  (atom (keyword) @function.builtin (#eq? @keyword "i64tod")))
+
+(list
+  (atom (keyword) @keyword (#eq? @keyword "lambda"))
+  (list . (atom (identifier) @parameter)*))
+
+(list
+  (atom (keyword) @keyword (#eq? @keyword "let"))
+  (list
+    (list . (atom (identifier) @variable)*)))
+
+(list . (atom (identifier) @function.call))
+
+(atom (identifier) @variable)
+
+(symbol) @string.special
+
+"(" @punctuation.bracket
+")" @punctuation.bracket
